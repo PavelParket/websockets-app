@@ -12,15 +12,23 @@ public class UserHandshakeInterceptor implements HandshakeInterceptor {
 
     @Override
     public boolean beforeHandshake(ServerHttpRequest request, ServerHttpResponse response, WebSocketHandler wsHandler, Map<String, Object> attributes) throws Exception {
-        String userId = UriComponentsBuilder.fromUri(request.getURI()).build()
-                .getQueryParams()
-                .getFirst("userId");
+        var queryParams = UriComponentsBuilder.fromUri(request.getURI()).build().getQueryParams();
+
+        String userId = queryParams.getFirst("userId");
 
         if (userId == null || userId.isBlank()) {
             userId = "guest-" + System.currentTimeMillis();
         }
 
         attributes.put("userId", userId);
+
+        String roomId = queryParams.getFirst("roomId");
+
+        if (roomId == null || roomId.isBlank()) {
+            roomId = "default";
+        }
+
+        attributes.put("roomId", roomId);
 
         return true;
     }

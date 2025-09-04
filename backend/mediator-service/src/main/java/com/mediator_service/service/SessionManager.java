@@ -1,7 +1,6 @@
 package com.mediator_service.service;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.socket.WebSocketSession;
 
@@ -15,9 +14,6 @@ public class SessionManager {
 
     private final Map<String, WebSocketSession> sessions = new ConcurrentHashMap<>();
 
-    @Value("${spring.session.max.per-user}")
-    private int maxSessionsPerUser;
-
     public void register(String userId, WebSocketSession session) {
         if (userId == null || session == null) {
             return;
@@ -29,9 +25,11 @@ public class SessionManager {
             try {
                 old.close();
             } catch (IOException e) {
-                log.error("Close failed for user {}", userId, e);
+                log.info("Close failed for user {}", userId, e);
             }
         }
+
+        log.info("User {} registered session {}", userId, session.getId());
     }
 
     public void remove(String userId) {
@@ -44,6 +42,8 @@ public class SessionManager {
                 throw new RuntimeException(e.getMessage());
             }
         }
+
+        log.info("User {} removed session {}", userId, session != null ? session.getId() : null);
     }
 
     public Map<String, WebSocketSession> getAll() {
