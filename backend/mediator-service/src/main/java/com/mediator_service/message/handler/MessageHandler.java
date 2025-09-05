@@ -1,6 +1,6 @@
-package com.mediator_service.handler;
+package com.mediator_service.message.handler;
 
-import com.mediator_service.dto.MessageResponse;
+import com.mediator_service.domain.dto.MessageResponse;
 import org.springframework.web.socket.WebSocketSession;
 
 public interface MessageHandler {

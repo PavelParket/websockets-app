@@ -1,6 +1,6 @@
-package com.mediator_service.serializer;
+package com.mediator_service.message.serializer;
 
-import com.mediator_service.dto.MessageResponse;
+import com.mediator_service.domain.dto.MessageResponse;
 
 public interface MessageSerializer {
 

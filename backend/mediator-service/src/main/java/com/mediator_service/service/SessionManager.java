@@ -1,6 +1,6 @@
 package com.mediator_service.service;
 
-import com.mediator_service.strategy.SessionRemovalPolicy;
+import com.mediator_service.domain.strategy.SessionRemovalPolicy;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;

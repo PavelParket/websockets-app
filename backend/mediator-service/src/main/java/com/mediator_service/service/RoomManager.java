@@ -1,7 +1,8 @@
 package com.mediator_service.service;
 
-import com.mediator_service.dto.MessageResponse;
-import com.mediator_service.serializer.MessageSerializer;
+import com.mediator_service.domain.dto.MessageResponse;
+import com.mediator_service.message.history.MessageHistoryService;
+import com.mediator_service.message.serializer.MessageSerializer;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

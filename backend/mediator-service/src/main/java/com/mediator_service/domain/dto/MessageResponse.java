@@ -1,4 +1,4 @@
-package com.mediator_service.dto;
+package com.mediator_service.domain.dto;
 
 import lombok.Builder;
 

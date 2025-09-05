@@ -1,4 +1,4 @@
-package com.mediator_service.strategy;
+package com.mediator_service.domain.strategy;
 
 import org.springframework.web.socket.WebSocketSession;
 

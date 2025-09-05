@@ -1,6 +1,6 @@
 package com.mediator_service.service;
 
-import com.mediator_service.dto.MessageResponse;
+import com.mediator_service.domain.dto.MessageResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -19,7 +19,7 @@ public class SystemMessageService {
     }
 
     private void broadcast(String roomId, String content) {
-        MessageResponse message = new MessageResponse("system", "system", null, roomId, content);
+        MessageResponse message = new MessageResponse("system", "system", "all", roomId, content);
         roomManager.broadcast(roomId, message, null);
     }
 }
