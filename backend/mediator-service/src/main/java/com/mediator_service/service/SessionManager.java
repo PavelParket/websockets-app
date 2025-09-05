@@ -1,18 +1,24 @@
 package com.mediator_service.service;
 
+import com.mediator_service.strategy.SessionRemovalPolicy;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.web.socket.WebSocketSession;
 
-import java.io.IOException;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Service
+@RequiredArgsConstructor
 @Slf4j
 public class SessionManager {
 
     private final Map<String, WebSocketSession> sessions = new ConcurrentHashMap<>();
+
+    @Qualifier("closeOnRemovePolicy")
+    private final SessionRemovalPolicy removalPolicy;
 
     public void register(String userId, WebSocketSession session) {
         if (userId == null || session == null) {
@@ -22,11 +28,7 @@ public class SessionManager {
         WebSocketSession old = sessions.put(userId, session);
 
         if (old != null && old.isOpen()) {
-            try {
-                old.close();
-            } catch (IOException e) {
-                log.info("Close failed for user {}", userId, e);
-            }
+            removalPolicy.onRemove(userId, old);
         }
 
         log.info("User {} registered session {}", userId, session.getId());
@@ -36,11 +38,7 @@ public class SessionManager {
         WebSocketSession session = sessions.remove(userId);
 
         if (session != null && session.isOpen()) {
-            try {
-                session.close();
-            } catch (IOException e) {
-                throw new RuntimeException(e.getMessage());
-            }
+            removalPolicy.onRemove(userId, session);
         }
 
         log.info("User {} removed session {}", userId, session != null ? session.getId() : null);

@@ -1,17 +1,16 @@
 package com.mediator_service.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mediator_service.dto.MessageResponse;
+import com.mediator_service.serializer.MessageSerializer;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 
 import java.io.IOException;
-import java.util.ArrayDeque;
-import java.util.Deque;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -24,22 +23,23 @@ public class RoomManager {
     @Getter
     private final Map<String, Set<WebSocketSession>> rooms = new ConcurrentHashMap<>();
 
-    private final Map<String, Deque<MessageResponse>> histories = new ConcurrentHashMap<>();
+    private final MessageHistoryService service;
 
-    private final ObjectMapper mapper;
+    @Qualifier("jsonSerializer")
+    private final MessageSerializer serializer;
 
     public void addSession(String roomId, WebSocketSession session) {
         rooms.computeIfAbsent(roomId, k -> ConcurrentHashMap.newKeySet())
                 .add(session);
 
-        log.info("Session sessionId={} joined room roomId={}", session.getId(), roomId);
+        log.info("Session \"{}\" joined room \"{}\"", session.getId(), roomId);
 
-        Deque<MessageResponse> history = histories.get(roomId);
+        var history = service.getHistory(roomId);
 
-        if (history != null && !history.isEmpty()) {
+        if (!history.isEmpty()) {
             try {
-                MessageResponse messageResponse = new MessageResponse("history", "system", null, roomId, mapper.writeValueAsString(history));
-                session.sendMessage(new TextMessage(mapper.writeValueAsString(messageResponse)));
+                MessageResponse messageResponse = new MessageResponse("history", "system", null, roomId, history.toString());
+                session.sendMessage(new TextMessage(serializer.serialize(messageResponse)));
             } catch (Exception e) {
                 log.error("Failed to send history to session {}", session.getId(), e);
             }
@@ -47,7 +47,7 @@ public class RoomManager {
     }
 
     public void removeSession(String roomId, WebSocketSession session) {
-        Set<WebSocketSession> sessions = rooms.get(roomId);
+        var sessions = rooms.get(roomId);
 
         if (sessions != null) {
             sessions.remove(session);
@@ -57,14 +57,14 @@ public class RoomManager {
             }
         }
 
-        log.info("Session {} left room {}", session.getId(), roomId);
+        log.info("Session {} left room \"{}\"", session.getId(), roomId);
     }
 
-    public void broadcast(String roomId, MessageResponse messageResponse, WebSocketSession sender) {
+    public void broadcast(String roomId, MessageResponse message, WebSocketSession sender) {
         try {
-            String json = mapper.writeValueAsString(messageResponse);
+            String json = serializer.serialize(message);
 
-            Set<WebSocketSession> sessions = rooms.get(roomId);
+            var sessions = rooms.get(roomId);
 
             if (sessions == null || sessions.isEmpty()) return;
 
@@ -82,11 +82,11 @@ public class RoomManager {
                 }
             }
 
-            if ("message".equals(messageResponse.type())) {
-                saveMessage(roomId, messageResponse);
+            if ("message".equals(message.type())) {
+                service.save(roomId, message);
             }
 
-            log.info("Broadcast in room {} from {} → {} recipients", roomId, messageResponse.fromUserId(), sessions.size() - 1);
+            log.info("Broadcast in room \"{}\" from {} → {} recipients", roomId, message.fromUserId(), sessions.size());
         } catch (Exception e) {
             log.error("Failed to broadcast message", e);
         }
@@ -95,13 +95,4 @@ public class RoomManager {
     public Set<String> getActiveRooms() {
         return rooms.keySet();
     }
-
-    public void saveMessage(String roomId, MessageResponse messageResponse) {
-        histories.computeIfAbsent(roomId, k -> new ArrayDeque<>());
-
-        Deque<MessageResponse> history = histories.get(roomId);
-
-        history.addLast(messageResponse);
-    }
 }
-

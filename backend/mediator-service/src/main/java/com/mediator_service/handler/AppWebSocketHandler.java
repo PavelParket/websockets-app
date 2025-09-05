@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mediator_service.dto.MessageResponse;
 import com.mediator_service.service.RoomManager;
 import com.mediator_service.service.SessionManager;
+import com.mediator_service.service.SystemMessageService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -13,6 +14,7 @@ import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 import java.io.IOException;
+import java.util.List;
 
 @Component
 @RequiredArgsConstructor
@@ -23,6 +25,10 @@ public class AppWebSocketHandler extends TextWebSocketHandler {
 
     private final RoomManager roomManager;
 
+    private final List<MessageHandler> handlers;
+
+    private final SystemMessageService systemMessageService;
+
     @Override
     public void afterConnectionEstablished(WebSocketSession session) {
         String userId = getUserIdFromSession(session);
@@ -31,29 +37,21 @@ public class AppWebSocketHandler extends TextWebSocketHandler {
         sessionManager.register(userId, session);
         roomManager.addSession(roomId, session);
 
-        roomManager.broadcast(roomId, systemMessage(roomId, "User " + userId + " joined the room"), null);
+        systemMessageService.userJoined(roomId, userId);
     }
 
     @Override
     protected void handleTextMessage(WebSocketSession session, TextMessage message) {
         try {
             MessageResponse incoming = new ObjectMapper().readValue(message.getPayload(), MessageResponse.class);
-            String userId = getUserIdFromSession(session);
-            String roomId = getRoomIdFromSession(session);
 
-            switch (incoming.type()) {
-                case "message" -> {
-                    MessageResponse wsMessageResponse = new MessageResponse(incoming.type(), userId, incoming.toUserId(), roomId, incoming.content());
-                    roomManager.broadcast(roomId, wsMessageResponse, session);
-                }
-
-                case "typing" -> {
-                    MessageResponse wsMessageResponse = new MessageResponse(incoming.type(), userId, null, roomId, incoming.content());
-                    roomManager.broadcast(roomId, wsMessageResponse, session);
-                }
-
-                default -> log.warn("Unknown message type: {}", incoming.type());
-            }
+            handlers.stream()
+                    .filter(messageHandler -> messageHandler.supports(incoming.type()))
+                    .findFirst()
+                    .ifPresentOrElse(
+                            messageHandler -> messageHandler.handle(incoming, session),
+                            () -> log.warn("No handler found for type {}", incoming.type())
+                    );
         } catch (Exception e) {
             log.error("Failed to handle message", e);
         }
@@ -67,7 +65,7 @@ public class AppWebSocketHandler extends TextWebSocketHandler {
         sessionManager.remove(userId);
         roomManager.removeSession(roomId, session);
 
-        roomManager.broadcast(roomId, systemMessage(roomId, "User " + userId + " left the room"), null);
+        systemMessageService.userLeft(roomId, userId);
     }
 
     private String getUserIdFromSession(WebSocketSession session) {
@@ -87,9 +85,5 @@ public class AppWebSocketHandler extends TextWebSocketHandler {
                 throw new RuntimeException(e.getMessage());
             }
         }
-    }
-
-    private MessageResponse systemMessage(String roomId, String content) {
-        return new MessageResponse("system", "system", null, roomId, content);
     }
 }
