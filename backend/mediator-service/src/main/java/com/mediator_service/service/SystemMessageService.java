@@ -1,6 +1,7 @@
 package com.mediator_service.service;
 
 import com.mediator_service.domain.dto.MessageResponse;
+import com.mediator_service.factory.MessageFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -9,6 +10,8 @@ import org.springframework.stereotype.Service;
 public class SystemMessageService {
 
     private final RoomManager roomManager;
+
+    private final MessageFactory factory;
 
     public void userJoined(String roomId, String userId) {
         broadcast(roomId, "User " + userId + " joined the room");
@@ -19,7 +22,7 @@ public class SystemMessageService {
     }
 
     private void broadcast(String roomId, String content) {
-        MessageResponse message = new MessageResponse("system", "system", "all", roomId, content);
+        MessageResponse message = factory.toSystemMessage(roomId, content);
         roomManager.broadcast(roomId, message, null);
     }
 }

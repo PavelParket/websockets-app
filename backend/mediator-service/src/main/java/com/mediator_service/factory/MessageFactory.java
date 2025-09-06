@@ -1,4 +1,4 @@
-package com.mediator_service.mapper;
+package com.mediator_service.factory;
 
 import com.mediator_service.domain.dto.MessageRequest;
 import com.mediator_service.domain.dto.MessageResponse;
@@ -8,11 +8,16 @@ import org.mapstruct.Named;
 import org.springframework.web.socket.WebSocketSession;
 
 @Mapper(componentModel = "spring")
-public interface MessageMapper {
+public interface MessageFactory {
 
     @Mapping(target = "fromUserId", source = "session", qualifiedByName = "extractUserId")
     @Mapping(target = "roomId", source = "session", qualifiedByName = "extractRoomId")
-    MessageResponse toResponse(MessageRequest request, WebSocketSession session);
+    MessageResponse toMessage(MessageRequest request, WebSocketSession session);
+
+    @Mapping(target = "type", constant = "system")
+    @Mapping(target = "fromUserId", constant = "system")
+    @Mapping(target = "toUserId", constant = "all")
+    MessageResponse toSystemMessage(String roomId, String content);
 
     @Named("extractUserId")
     default String extractUserId(WebSocketSession session) {

@@ -39,7 +39,13 @@ public class RoomManager {
 
         if (!history.isEmpty()) {
             try {
-                MessageResponse messageResponse = new MessageResponse("history", "system", null, roomId, history.toString());
+                MessageResponse messageResponse = new MessageResponse(
+                        "history",
+                        "system",
+                        (String) session.getAttributes().get("userId"),
+                        roomId,
+                        history.toString()
+                );
                 session.sendMessage(new TextMessage(serializer.serialize(messageResponse)));
             } catch (Exception e) {
                 log.error("Failed to send history to session {}", session.getId(), e);

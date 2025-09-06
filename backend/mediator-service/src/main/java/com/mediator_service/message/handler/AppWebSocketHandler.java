@@ -3,7 +3,7 @@ package com.mediator_service.message.handler;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mediator_service.domain.dto.MessageRequest;
 import com.mediator_service.domain.dto.MessageResponse;
-import com.mediator_service.mapper.MessageMapper;
+import com.mediator_service.factory.MessageFactory;
 import com.mediator_service.service.RoomManager;
 import com.mediator_service.service.SessionManager;
 import com.mediator_service.service.SystemMessageService;
@@ -31,7 +31,7 @@ public class AppWebSocketHandler extends TextWebSocketHandler {
 
     private final SystemMessageService systemMessageService;
 
-    private final MessageMapper mapper;
+    private final MessageFactory factory;
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) {
@@ -48,8 +48,7 @@ public class AppWebSocketHandler extends TextWebSocketHandler {
     protected void handleTextMessage(WebSocketSession session, TextMessage message) {
         try {
             MessageRequest request = new ObjectMapper().readValue(message.getPayload(), MessageRequest.class);
-
-            MessageResponse response = mapper.toResponse(request, session);
+            MessageResponse response = factory.toMessage(request, session);
 
             handlers.stream()
                     .filter(messageHandler -> messageHandler.supports(response.type()))
