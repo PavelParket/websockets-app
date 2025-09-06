@@ -1,0 +1,8 @@
+services:
+  mediator-service:
+    container_name: mediator-service
+    build:
+      context: .
+      dockerfile: /deploy/mediator-service.Dockerfile
+    ports:
+      - "8080:8080"
