@@ -6,3 +6,26 @@ services:
       dockerfile: /deploy/mediator-service.Dockerfile
     ports:
       - "8080:8080"
+    networks:
+      - app-network
+
+  postgres-security:
+    container_name: postgres-security
+    image: postgres:17.4
+    environment:
+      POSTGRES_DB: ${SECURITY_POSTGRES_DB}
+      POSTGRES_USER: ${SECURITY_POSTGRES_USERNAME}
+      POSTGRES_PASSWORD: ${SECURITY_POSTGRES_PASSWORD}
+    ports:
+      - "${SECURITY_POSTGRES_PORT}:5432"
+    volumes:
+      - postgres-security-data:/var/lib/postgresql/data
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  postgres-security-data:
