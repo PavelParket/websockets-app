@@ -24,13 +24,13 @@ public class JwtProvider {
     @Value("${spring.security.jwt.refresh-expiration}")
     private Long refreshExpiration;
 
-    public String generateAccess(String username, String role) {
+    public String generateAccess(String email, String role) {
         Map<String, Object> claims = new HashMap<>() {{
             put("role", role);
         }};
 
         return Jwts.builder()
-                .subject(username)
+                .subject(email)
                 .claims(claims)
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis() + accessExpiration))
@@ -38,7 +38,7 @@ public class JwtProvider {
                 .compact();
     }
 
-    public String getUsername(String token) {
+    public String getEmail(String token) {
         return Jwts.parser()
                 .verifyWith(getSigningKey())
                 .build()

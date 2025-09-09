@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,13 +26,15 @@ public class UserService implements UserDetailsService {
 
     private final UserMapper mapper;
 
+    private final PasswordEncoder passwordEncoder;
+
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = repository.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        User user = repository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found: " + email));
 
         return org.springframework.security.core.userdetails.User
-                .withUsername(user.getUsername())
+                .withUsername(user.getEmail())
                 .password(user.getPassword())
                 .authorities(String.valueOf(user.getRole()))
                 .build();
@@ -44,7 +47,10 @@ public class UserService implements UserDetailsService {
             throw new ResourceAlreadyExistsException("Email already exists");
         }
 
-        return mapper.toResponse(repository.save(mapper.toEntity(request, Role.USER)));
+        User user = mapper.toEntity(request, Role.USER);
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+
+        return mapper.toResponse(repository.save(user));
     }
 
     @Transactional

@@ -41,7 +41,7 @@ public class AuthService {
                     .orElseThrow(() -> new UsernameNotFoundException("User not found: " + request.email()));
 
             Authentication authentication = manager.authenticate(
-                    new UsernamePasswordAuthenticationToken(user.getUsername(), request.password())
+                    new UsernamePasswordAuthenticationToken(user.getEmail(), request.password())
             );
 
             String accessToken = provider.generateAccess(authentication.getName(), Role.USER.toString());
