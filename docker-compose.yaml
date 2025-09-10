@@ -1,11 +1,34 @@
 services:
   mediator-service:
     container_name: mediator-service
+    env_file:
+      - .env
     build:
       context: .
       dockerfile: /deploy/mediator-service.Dockerfile
     ports:
-      - "8080:8080"
+      - "8080:${SERVER_PORT}"
+    networks:
+      - app-network
+
+  security-service:
+    container_name: security-service
+    env_file:
+      - .env
+    build:
+      context: .
+      dockerfile: /deploy/security-service.Dockerfile
+    ports:
+      - "8081:${SERVER_PORT}"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-security:${SECURITY_SERVICE_POSTGRES_PORT}/${SECURITY_SERVICE_POSTGRES_DB}
+      SPRING_DATASOURCE_USERNAME: ${SECURITY_SERVICE_POSTGRES_USERNAME}
+      SPRING_DATASOURCE_PASSWORD: ${SECURITY_SERVICE_POSTGRES_PASSWORD}
+      SPRING_JWT_SECRET: ${JWT_SECRET}
+      SPRING_JWT_ACCESS_EXPIRATION: ${JWT_ACCESS_EXPIRATION}
+      SPRING_JWT_REFRESH_EXPIRATION: ${JWT_REFRESH_EXPIRATION}
+    depends_on:
+      - postgres-security
     networks:
       - app-network
 

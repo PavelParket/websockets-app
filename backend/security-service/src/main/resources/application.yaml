@@ -17,12 +17,12 @@ spring:
 
   security:
     jwt:
-      secret: qwriblsvpo4209v02ivaorijoijw09jfpqjvpq98j349852ivneaionvoiewjfcioeqrjgipj42gj90qrjv00wqjfig3i4bnijewioh3ih09002348uv0q3di9uheip2923j0htrjibnovdnkaoijq3ijtw4hipbiovdwioq3g
-      access-expiration: 900000
-      refresh-expiration: 3600000
+      secret: ${JWT_SECRET}
+      access-expiration: ${JWT_ACCESS_EXPIRATION}
+      refresh-expiration: ${JWT_REFRESH_EXPIRATION}
 
 server:
-  port: 8081
+  port: ${SERVER_PORT}
 
 logging:
   level:
