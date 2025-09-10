@@ -1,9 +1,9 @@
 package com.security_service.service;
 
 import com.security_service.dto.AuthRequest;
+import com.security_service.dto.AuthResponse;
 import com.security_service.dto.CreateUserRequest;
 import com.security_service.dto.UserResponse;
-import com.security_service.entity.Role;
 import com.security_service.entity.User;
 import com.security_service.exception.InvalidCredentialsException;
 import com.security_service.jwt.JwtProvider;
@@ -31,11 +31,16 @@ public class AuthService {
 
     private final AuthenticationManager manager;
 
-    public UserResponse register(CreateUserRequest request) {
-        return service.create(request);
+    public AuthResponse register(CreateUserRequest request) {
+        UserResponse user = service.create(request);
+
+        String accessToken = provider.generateAccess(user.email(), user.role());
+        String refreshToken = provider.generateRefresh(user.email(), user.role());
+
+        return mapper.toAuthResponse(user, accessToken, refreshToken);
     }
 
-    public UserResponse login(AuthRequest request) {
+    public AuthResponse login(AuthRequest request) {
         try {
             User user = repository.findByEmail(request.email())
                     .orElseThrow(() -> new UsernameNotFoundException("User not found: " + request.email()));
@@ -44,9 +49,10 @@ public class AuthService {
                     new UsernamePasswordAuthenticationToken(user.getEmail(), request.password())
             );
 
-            String accessToken = provider.generateAccess(authentication.getName(), Role.USER.toString());
+            String accessToken = provider.generateAccess(authentication.getName(), user.getRole().toString());
+            String refreshToken = provider.generateRefresh(authentication.getName(), user.getRole().toString());
 
-            return mapper.toResponse(user, accessToken);
+            return mapper.toAuthResponse(user, accessToken, refreshToken);
         } catch (AuthenticationException e) {
             throw new InvalidCredentialsException("Invalid credentials");
         }

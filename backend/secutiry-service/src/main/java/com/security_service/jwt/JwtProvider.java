@@ -38,6 +38,20 @@ public class JwtProvider {
                 .compact();
     }
 
+    public String generateRefresh(String email, String role) {
+        Map<String, Object> claims = new HashMap<>() {{
+            put("role", role);
+        }};
+
+        return Jwts.builder()
+                .subject(email)
+                .claims(claims)
+                .issuedAt(new Date())
+                .expiration(new Date(System.currentTimeMillis() + refreshExpiration))
+                .signWith(getSigningKey())
+                .compact();
+    }
+
     public String getEmail(String token) {
         return Jwts.parser()
                 .verifyWith(getSigningKey())

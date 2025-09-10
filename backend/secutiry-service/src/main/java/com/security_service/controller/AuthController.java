@@ -1,8 +1,8 @@
 package com.security_service.controller;
 
 import com.security_service.dto.AuthRequest;
+import com.security_service.dto.AuthResponse;
 import com.security_service.dto.CreateUserRequest;
-import com.security_service.dto.UserResponse;
 import com.security_service.service.AuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -20,12 +20,12 @@ public class AuthController {
     private final AuthService service;
 
     @PostMapping("/register")
-    public ResponseEntity<UserResponse> register(@RequestBody CreateUserRequest request) {
+    public ResponseEntity<AuthResponse> register(@RequestBody CreateUserRequest request) {
         return new ResponseEntity<>(service.register(request), HttpStatus.CREATED);
     }
 
     @PostMapping("/login")
-    public ResponseEntity<UserResponse> login(@RequestBody AuthRequest request) {
+    public ResponseEntity<AuthResponse> login(@RequestBody AuthRequest request) {
         return new ResponseEntity<>(service.login(request), HttpStatus.OK);
     }
 }

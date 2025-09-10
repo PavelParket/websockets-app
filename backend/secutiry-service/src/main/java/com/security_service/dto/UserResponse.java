@@ -10,8 +10,6 @@ public record UserResponse(
         String username,
         String email,
         String role,
-        LocalDate createdAt,
-        String accessToken,
-        String refreshToken
+        LocalDate createdAt
 ) {
 }
