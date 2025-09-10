@@ -4,6 +4,7 @@ import com.security_service.dto.AuthRequest;
 import com.security_service.dto.AuthResponse;
 import com.security_service.dto.CreateUserRequest;
 import com.security_service.service.AuthService;
+import com.security_service.service.AuthenticationFacade;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,15 +18,15 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class AuthController {
 
-    private final AuthService service;
+    private final AuthenticationFacade facade;
 
     @PostMapping("/register")
     public ResponseEntity<AuthResponse> register(@RequestBody CreateUserRequest request) {
-        return new ResponseEntity<>(service.register(request), HttpStatus.CREATED);
+        return new ResponseEntity<>(facade.register(request), HttpStatus.CREATED);
     }
 
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> login(@RequestBody AuthRequest request) {
-        return new ResponseEntity<>(service.login(request), HttpStatus.OK);
+        return new ResponseEntity<>(facade.login(request), HttpStatus.OK);
     }
 }

@@ -3,7 +3,7 @@ package com.security_service.jwt;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
-import org.springframework.beans.factory.annotation.Value;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
@@ -13,18 +13,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Component
+@RequiredArgsConstructor
 public class JwtProvider {
 
-    @Value("${spring.security.jwt.secret}")
-    private String secret;
+    private final JwtProperties properties;
 
-    @Value("${spring.security.jwt.access-expiration}")
-    private Long accessExpiration;
-
-    @Value("${spring.security.jwt.refresh-expiration}")
-    private Long refreshExpiration;
-
-    public String generateAccess(String email, String role) {
+    public String generateToken(String email, String role, Long expiration) {
         Map<String, Object> claims = new HashMap<>() {{
             put("role", role);
         }};
@@ -33,21 +27,7 @@ public class JwtProvider {
                 .subject(email)
                 .claims(claims)
                 .issuedAt(new Date())
-                .expiration(new Date(System.currentTimeMillis() + accessExpiration))
-                .signWith(getSigningKey())
-                .compact();
-    }
-
-    public String generateRefresh(String email, String role) {
-        Map<String, Object> claims = new HashMap<>() {{
-            put("role", role);
-        }};
-
-        return Jwts.builder()
-                .subject(email)
-                .claims(claims)
-                .issuedAt(new Date())
-                .expiration(new Date(System.currentTimeMillis() + refreshExpiration))
+                .expiration(new Date(System.currentTimeMillis() + expiration))
                 .signWith(getSigningKey())
                 .compact();
     }
@@ -71,6 +51,6 @@ public class JwtProvider {
     }
 
     private SecretKey getSigningKey() {
-        return Keys.hmacShaKeyFor(this.secret.getBytes(StandardCharsets.UTF_8));
+        return Keys.hmacShaKeyFor(properties.secret().getBytes(StandardCharsets.UTF_8));
     }
 }

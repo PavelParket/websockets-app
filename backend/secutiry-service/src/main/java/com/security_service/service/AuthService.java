@@ -2,17 +2,15 @@ package com.security_service.service;
 
 import com.security_service.dto.AuthRequest;
 import com.security_service.dto.AuthResponse;
-import com.security_service.dto.CreateUserRequest;
-import com.security_service.dto.UserResponse;
 import com.security_service.entity.User;
 import com.security_service.exception.InvalidCredentialsException;
-import com.security_service.jwt.JwtProvider;
+import com.security_service.jwt.factory.AccessTokenFactory;
+import com.security_service.jwt.factory.RefreshTokenFactory;
 import com.security_service.mapper.UserMapper;
 import com.security_service.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -23,19 +21,20 @@ public class AuthService {
 
     private final UserRepository repository;
 
-    private final UserService service;
-
     private final UserMapper mapper;
 
-    private final JwtProvider provider;
+    private final AccessTokenFactory accessFactory;
+
+    private final RefreshTokenFactory refreshFactory;
 
     private final AuthenticationManager manager;
 
-    public AuthResponse register(CreateUserRequest request) {
-        UserResponse user = service.create(request);
+    public AuthResponse register(String email, String role) {
+        User user = repository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found: " + email));
 
-        String accessToken = provider.generateAccess(user.email(), user.role());
-        String refreshToken = provider.generateRefresh(user.email(), user.role());
+        String accessToken = accessFactory.generateToken(email, role);
+        String refreshToken = refreshFactory.generateToken(email, role);
 
         return mapper.toAuthResponse(user, accessToken, refreshToken);
     }
@@ -45,16 +44,18 @@ public class AuthService {
             User user = repository.findByEmail(request.email())
                     .orElseThrow(() -> new UsernameNotFoundException("User not found: " + request.email()));
 
-            Authentication authentication = manager.authenticate(
-                    new UsernamePasswordAuthenticationToken(user.getEmail(), request.password())
-            );
+            authenticate(request.email(), request.password());
 
-            String accessToken = provider.generateAccess(authentication.getName(), user.getRole().toString());
-            String refreshToken = provider.generateRefresh(authentication.getName(), user.getRole().toString());
+            String accessToken = accessFactory.generateToken(user.getEmail(), user.getRole().toString());
+            String refreshToken = refreshFactory.generateToken(user.getEmail(), user.getRole().toString());
 
             return mapper.toAuthResponse(user, accessToken, refreshToken);
         } catch (AuthenticationException e) {
             throw new InvalidCredentialsException("Invalid credentials");
         }
+    }
+
+    private void authenticate(String email, String password) {
+        manager.authenticate(new UsernamePasswordAuthenticationToken(email, password));
     }
 }

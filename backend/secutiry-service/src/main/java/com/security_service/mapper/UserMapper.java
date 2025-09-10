@@ -15,7 +15,7 @@ public interface UserMapper {
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "role", ignore = true)
-    @Mapping(target = "createdAt", expression = "java(java.time.LocalDate.now())")
+    @Mapping(target = "createdAt", ignore = true)
     User toEntity(CreateUserRequest request);
 
     UserResponse toResponse(User user);
@@ -23,8 +23,6 @@ public interface UserMapper {
     List<UserResponse> toResponseList(List<User> users);
 
     AuthResponse toAuthResponse(User user, String accessToken, String refreshToken);
-
-    AuthResponse toAuthResponse(UserResponse response, String accessToken, String refreshToken);
 
     default User toEntity(CreateUserRequest request, Role role) {
         User user = toEntity(request);

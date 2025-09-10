@@ -36,7 +36,7 @@ public class UserService implements UserDetailsService {
         return org.springframework.security.core.userdetails.User
                 .withUsername(user.getEmail())
                 .password(user.getPassword())
-                .authorities(String.valueOf(user.getRole()))
+                .authorities(user.getRole().toString())
                 .build();
 
     }
@@ -56,7 +56,7 @@ public class UserService implements UserDetailsService {
     @Transactional
     public void delete(Long id) {
         if (!repository.existsById(id)) {
-            throw new ResourceNotFoundException("User not found with id " + id);
+            throw new ResourceNotFoundException("User not found with id" + id);
         }
 
         repository.deleteById(id);
@@ -68,7 +68,13 @@ public class UserService implements UserDetailsService {
 
     public UserResponse getById(Long id) {
         return mapper.toResponse(repository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found with id " + id))
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with id=" + id))
+        );
+    }
+
+    public UserResponse getByEmail(String email) {
+        return mapper.toResponse(repository.findByEmail(email)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with email=" + email))
         );
     }
 }
