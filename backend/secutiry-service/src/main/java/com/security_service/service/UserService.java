@@ -8,11 +8,11 @@ import com.security_service.exception.ResourceAlreadyExistsException;
 import com.security_service.exception.ResourceNotFoundException;
 import com.security_service.mapper.UserMapper;
 import com.security_service.repository.UserRepository;
+import com.security_service.util.PasswordEncodingStrategy;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,7 +26,7 @@ public class UserService implements UserDetailsService {
 
     private final UserMapper mapper;
 
-    private final PasswordEncoder passwordEncoder;
+    private final PasswordEncodingStrategy strategy;
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
@@ -48,7 +48,7 @@ public class UserService implements UserDetailsService {
         }
 
         User user = mapper.toEntity(request, Role.USER);
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        user.setPassword(strategy.encode(user.getPassword()));
 
         return mapper.toResponse(repository.save(user));
     }
