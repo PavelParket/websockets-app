@@ -3,7 +3,10 @@ package com.mediator_service.message.handler;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mediator_service.domain.dto.MessageRequest;
 import com.mediator_service.domain.dto.MessageResponse;
+import com.mediator_service.domain.enums.EventType;
+import com.mediator_service.domain.event.RoomEvent;
 import com.mediator_service.factory.MessageFactory;
+import com.mediator_service.service.RoomEventProducer;
 import com.mediator_service.service.RoomManager;
 import com.mediator_service.service.SessionManager;
 import com.mediator_service.service.SystemMessageService;
@@ -16,6 +19,7 @@ import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 @Component
@@ -32,6 +36,8 @@ public class AppWebSocketHandler extends TextWebSocketHandler {
     private final SystemMessageService systemMessageService;
 
     private final MessageFactory factory;
+
+    private final RoomEventProducer producer;
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) {
@@ -54,7 +60,12 @@ public class AppWebSocketHandler extends TextWebSocketHandler {
                     .filter(messageHandler -> messageHandler.supports(response.type()))
                     .findFirst()
                     .ifPresentOrElse(
-                            messageHandler -> messageHandler.handle(response, session),
+                            messageHandler -> {
+                                messageHandler.handle(response, session);
+
+                                RoomEvent event = new RoomEvent(EventType.MESSAGE_SENT, response.roomId(), response.fromUserId(), new ArrayList<>(roomManager.getUsersId(response.roomId())));
+                                producer.send(event);
+                            },
                             () -> log.warn("No handler found for type {}", response.type())
                     );
         } catch (Exception e) {

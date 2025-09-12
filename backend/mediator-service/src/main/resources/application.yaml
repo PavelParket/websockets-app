@@ -5,6 +5,14 @@ spring:
   config:
     import: optional:file:.env[.properties]
 
+  kafka:
+    bootstrap-servers: kafka:9092
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      properties:
+        spring.json.add.type.headers: true
+
 server:
   port: 8080
 
