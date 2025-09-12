@@ -1,6 +1,7 @@
 spring:
   application:
     name: security-service
+
   config:
     import: optional:file:.env[.properties]
 
@@ -22,7 +23,7 @@ spring:
       refresh-expiration: ${JWT_REFRESH_EXPIRATION}
 
 server:
-  port: ${SERVER_PORT}
+  port: 8081 #${SECURITY_SERVER_PORT}
 
 logging:
   level:

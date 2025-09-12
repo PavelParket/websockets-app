@@ -13,8 +13,10 @@ import org.springframework.web.socket.WebSocketSession;
 
 import java.io.IOException;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -101,5 +103,12 @@ public class RoomManager {
 
     public Set<String> getActiveRooms() {
         return rooms.keySet();
+    }
+
+    public Set<String> getUsersId(String roomId) {
+        return getRooms().getOrDefault(roomId, Set.of()).stream()
+                .map(session -> (String) session.getAttributes().get("userId"))
+                .filter(Objects::nonNull)
+                .collect(Collectors.toSet());
     }
 }

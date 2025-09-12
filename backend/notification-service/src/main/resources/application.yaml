@@ -1,12 +1,16 @@
 spring:
   application:
-    name: mediator-service
+    name: notification-service
 
   config:
     import: optional:file:.env[.properties]
 
+app:
+  websocket:
+    endpoint: /ws/notifications
+
 server:
-  port: 8080
+  port: 8082
 
 logging:
   level:
