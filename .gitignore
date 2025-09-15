@@ -53,7 +53,7 @@ Thumbs.db
 
 node_modules
 /build
-/.vite
+.vite
 /package-lock.json
 
 # logs
