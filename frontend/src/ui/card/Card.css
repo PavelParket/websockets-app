@@ -1,0 +1,17 @@
+.ui-card {
+   background: white;
+   border-radius: 8px;
+   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.ui-card--sm {
+   padding: 8px;
+}
+
+.ui-card--md {
+   padding: 16px;
+}
+
+.ui-card--lg {
+   padding: 24px;
+}
