@@ -1,6 +1,6 @@
 package com.security_service.controller;
 
-import com.security_service.dto.CreateUserRequest;
+import com.security_service.dto.RegisterRequest;
 import com.security_service.dto.UserResponse;
 import com.security_service.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -24,7 +24,7 @@ public class UserController {
     private final UserService service;
 
     @PostMapping
-    public ResponseEntity<UserResponse> create(@RequestBody CreateUserRequest request) {
+    public ResponseEntity<UserResponse> create(@RequestBody RegisterRequest request) {
         return new ResponseEntity<>(service.create(request), HttpStatus.CREATED);
     }
 

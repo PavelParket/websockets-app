@@ -2,8 +2,7 @@ package com.security_service.controller;
 
 import com.security_service.dto.AuthRequest;
 import com.security_service.dto.AuthResponse;
-import com.security_service.dto.CreateUserRequest;
-import com.security_service.service.AuthService;
+import com.security_service.dto.RegisterRequest;
 import com.security_service.service.AuthenticationFacade;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -21,7 +20,7 @@ public class AuthController {
     private final AuthenticationFacade facade;
 
     @PostMapping("/register")
-    public ResponseEntity<AuthResponse> register(@RequestBody CreateUserRequest request) {
+    public ResponseEntity<AuthResponse> register(@RequestBody RegisterRequest request) {
         return new ResponseEntity<>(facade.register(request), HttpStatus.CREATED);
     }
 

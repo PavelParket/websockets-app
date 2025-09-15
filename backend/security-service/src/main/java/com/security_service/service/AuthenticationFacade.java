@@ -2,7 +2,7 @@ package com.security_service.service;
 
 import com.security_service.dto.AuthRequest;
 import com.security_service.dto.AuthResponse;
-import com.security_service.dto.CreateUserRequest;
+import com.security_service.dto.RegisterRequest;
 import com.security_service.dto.UserResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -15,7 +15,7 @@ public class AuthenticationFacade {
 
     private final AuthService authService;
 
-    public AuthResponse register(CreateUserRequest request) {
+    public AuthResponse register(RegisterRequest request) {
         UserResponse response = userService.create(request);
 
         return authService.register(response.email(), response.role());

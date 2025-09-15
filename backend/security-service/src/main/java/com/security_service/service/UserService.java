@@ -1,6 +1,6 @@
 package com.security_service.service;
 
-import com.security_service.dto.CreateUserRequest;
+import com.security_service.dto.RegisterRequest;
 import com.security_service.dto.UserResponse;
 import com.security_service.entity.Role;
 import com.security_service.entity.User;
@@ -42,7 +42,7 @@ public class UserService implements UserDetailsService {
     }
 
     @Transactional
-    public UserResponse create(CreateUserRequest request) {
+    public UserResponse create(RegisterRequest request) {
         if (repository.existsByEmail(request.email())) {
             throw new ResourceAlreadyExistsException("Email already exists");
         }
