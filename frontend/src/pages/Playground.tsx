@@ -1,4 +1,4 @@
-import { Container, Img, List, Typography, Box, Button, useTheme, Card, Input, ThemeSwitcher } from "../ui-library";
+import { Container, Img, List, Typography, Box, Button, useTheme, Card, Input, ThemeSwitcher } from "../ui";
 
 export function Playground() {
    const { theme, toggleTheme } = useTheme();

@@ -3,7 +3,7 @@ import Home from "./pages/Home"
 import Rooms from "./pages/Rooms"
 import NotFound from "./pages/NotFound"
 import Register from "./pages/Register"
-import { ThemeProvider } from "./ui-library"
+import { ThemeProvider } from "./ui"
 import { Playground } from "./pages/Playground"
 
 export default function App() {
