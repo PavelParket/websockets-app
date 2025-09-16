@@ -19,8 +19,8 @@ export default function Register() {
 
    return (
       <Layout navbar={<Navbar brand="Websockets App" />}>
-         <Box display="flex" justifyContent="center" margin="5rem 0 0 0">
-            <Card padding="lg" style={{ width: "400px", textAlign: "center" }}>
+         <Box justifyContent="center" alignItems="center" style={{ width: "100%", height: "100%" }}>
+            <Card style={{ width: "400px", textAlign: "center" }}>
                <h2>Sign Up</h2>
                <Form onSubmit={handleSubmit} gap="16px">
                   <FormField

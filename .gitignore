@@ -52,9 +52,9 @@ docker-compose.override.yml
 Thumbs.db
 
 node_modules
-/build
-/.vite
-/package-lock.json
+build/
+.vite
+package-lock.json
 
 # logs
 npm-debug.log*
@@ -62,3 +62,6 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 pnpm-error.log*
+
+### Cursor ###
+.cursor
