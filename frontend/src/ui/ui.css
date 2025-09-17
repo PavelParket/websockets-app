@@ -21,7 +21,7 @@ body {
    --color-bg-glass: rgba(255, 255, 255, 0.6);
    /* Unified glass surface + blur preset */
    --glass-surface: rgba(255, 255, 255, 0.6);
-   --glass-blur: 8px;
+   --glass-blur: 5px;
    --color-text: #111111;
    --color-border: rgba(0, 0, 0, 0.1);
    /* Grayscale primary for light theme */
@@ -39,6 +39,21 @@ body {
 
    /* Background image tokens (set to an URL from /public if needed) */
    --bg-image: url("../assets/bg-light.jpg");
+
+   /* Button interaction tokens (light theme) */
+   /* Solid (dark bg -> lighten on hover/active) */
+   --btn-solid-hover-bg: color-mix(in oklab, var(--color-primary) 85%, white 15%);
+   --btn-solid-active-bg: color-mix(in oklab, var(--color-primary) 70%, white 30%);
+   /* Outline (hover -> dark bg; active -> slightly lighten) */
+   --btn-outline-hover-bg: var(--color-primary);
+   --btn-outline-active-bg: color-mix(in oklab, var(--color-primary) 85%, white 30%);
+   /* Ghost (light glass -> darken on hover/active) */
+   --btn-ghost-hover-bg: color-mix(in oklab, var(--glass-surface) 85%, black 15%);
+   --btn-ghost-active-bg: color-mix(in oklab, var(--glass-surface) 70%, black 30%);
+
+   /* Link interaction tokens (light theme): darken on hover/active */
+   --link-hover-color: color-mix(in oklab, var(--color-text) 85%, black 15%);
+   --link-active-color: color-mix(in oklab, var(--color-text) 70%, black 30%);
 }
 
 /* Dark theme */
@@ -47,7 +62,7 @@ html.dark {
    --color-bg-glass: rgba(30, 30, 30, 0.7);
    /* Unified glass surface + blur preset */
    --glass-surface: rgba(30, 30, 30, 0.7);
-   --glass-blur: 8px;
+   --glass-blur: 5px;
    --color-text: #f5f5f5;
    --color-border: rgba(255, 255, 255, 0.1);
    /* Grayscale primary for dark theme */
@@ -57,6 +72,35 @@ html.dark {
 
    /* Background image for dark theme (set as needed) */
    --bg-image: url("../assets/bg-dark.jpeg");
+
+   /* Button interaction tokens (dark theme) */
+   /* Solid (light bg -> darken on hover/active) */
+   --btn-solid-hover-bg: color-mix(in oklab, var(--color-primary) 85%, black 15%);
+   --btn-solid-active-bg: color-mix(in oklab, var(--color-primary) 70%, black 30%);
+   /* Outline (hover -> light bg; active -> slightly darken) */
+   --btn-outline-hover-bg: var(--color-primary);
+   --btn-outline-active-bg: color-mix(in oklab, var(--color-primary) 85%, black 30%);
+   /* Ghost (dark glass -> lighten on hover/active) */
+   --btn-ghost-hover-bg: color-mix(in oklab, var(--glass-surface) 85%, white 15%);
+   --btn-ghost-active-bg: color-mix(in oklab, var(--glass-surface) 70%, white 30%);
+
+   /* Link interaction tokens (dark theme): lighten on hover/active */
+   --link-hover-color: color-mix(in oklab, var(--color-text) 85%, white 15%);
+   --link-active-color: color-mix(in oklab, var(--color-text) 70%, white 30%);
+}
+
+/* Generic link styling */
+.link {
+   color: inherit;
+   transition: color 0.15s ease;
+}
+
+.link:hover {
+   color: var(--link-hover-color);
+}
+
+.link:active {
+   color: var(--link-active-color);
 }
 
 /* High-contrast modifier (accessibility) */
@@ -70,5 +114,5 @@ html.high-contrast {
    --on-primary: #ffffff;
    /* Reduce transparency on glass to improve legibility, and slightly increase blur */
    --glass-surface: rgba(255, 255, 255, 0.85);
-   --glass-blur: 10px;
+   --glass-blur: 5px;
 }

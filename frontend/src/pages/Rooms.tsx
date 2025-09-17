@@ -1,14 +1,16 @@
-import { Box, Card, Layout, Navbar } from "../ui";
+import { Box, Card, Container, Typography } from "../ui";
 
 export default function Rooms() {
    return (
-      <Layout navbar={<Navbar brand="Websockets App" />}>
-         <Box justifyContent="center" alignItems="center" style={{ width: "100%", height: "100%" }}>
-            <Card style={{ width: "500px", textAlign: "center" }}>
-               <h2>Rooms</h2>
-               <p>Here will be the list of user rooms.</p>
-            </Card>
-         </Box>
-      </Layout>
+      <Box style={{ padding: "56px 0" }}>
+         <Container>
+            <Box style={{ display: "grid", placeItems: "center" }}>
+               <Card style={{ width: "min(500px, 100%)", textAlign: "center" }}>
+                  <Typography variant="h2">Rooms</Typography>
+                  <Typography variant="body">Here will be the list of user rooms.</Typography>
+               </Card>
+            </Box>
+         </Container>
+      </Box>
    );
 }
