@@ -1,4 +1,4 @@
-import { Box, Button, Card, Container, Typography } from "../ui";
+import { Box, Button, Card, Container, Typography } from "../../ui";
 import { Link } from "react-router-dom";
 
 export default function NotFound() {

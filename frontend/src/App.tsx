@@ -1,7 +1,7 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom"
 import Home from "./pages/Home"
 import Rooms from "./pages/Rooms"
-import NotFound from "./pages/NotFound"
+import NotFound from "./pages/error/NotFound"
 import Register from "./pages/auth/Register"
 import Login from "./pages/auth/Login"
 import { ThemeProvider } from "./ui"
