@@ -18,9 +18,10 @@ public class JwtProvider {
 
     private final JwtProperties properties;
 
-    public String generateToken(String email, String role, Long expiration) {
+    public String generateToken(String email, String role, String username, Long expiration) {
         Map<String, Object> claims = new HashMap<>() {{
             put("role", role);
+            put("username", username);
         }};
 
         return Jwts.builder()

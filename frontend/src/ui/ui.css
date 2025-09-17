@@ -38,7 +38,7 @@ body {
    --shadow-lg: 0 10px 20px rgba(0, 0, 0, 0.2);
 
    /* Background image tokens (set to an URL from /public if needed) */
-   --bg-image: url("../../public/images/bg-light.jpg");
+   --bg-image: url("../assets/images/bg-light.jpg");
 
    /* Button interaction tokens (light theme) */
    /* Solid (dark bg -> lighten on hover/active) */
@@ -71,7 +71,7 @@ html.dark {
    --on-primary: #000000;
 
    /* Background image for dark theme (set as needed) */
-   --bg-image: url("../../public/images/bg-dark.jpeg");
+   --bg-image: url("../assets/images/bg-dark.jpeg");
 
    /* Button interaction tokens (dark theme) */
    /* Solid (light bg -> darken on hover/active) */

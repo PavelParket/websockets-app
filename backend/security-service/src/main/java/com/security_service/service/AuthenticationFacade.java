@@ -18,7 +18,7 @@ public class AuthenticationFacade {
     public AuthResponse register(RegisterRequest request) {
         UserResponse response = userService.create(request);
 
-        return authService.register(response.email(), response.role());
+        return authService.register(response.email());
     }
 
     public AuthResponse login(AuthRequest request) {

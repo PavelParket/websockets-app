@@ -29,12 +29,12 @@ public class AuthService {
 
     private final AuthenticationManager manager;
 
-    public AuthResponse register(String email, String role) {
+    public AuthResponse register(String email) {
         User user = repository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found: " + email));
 
-        String accessToken = accessFactory.generateToken(email, role);
-        String refreshToken = refreshFactory.generateToken(email, role);
+        String accessToken = accessFactory.generateToken(email, user.getRole().toString(), user.getUsername());
+        String refreshToken = refreshFactory.generateToken(email, user.getRole().toString(), user.getUsername());
 
         return mapper.toAuthResponse(user, accessToken, refreshToken);
     }
@@ -46,8 +46,8 @@ public class AuthService {
 
             authenticate(request.email(), request.password());
 
-            String accessToken = accessFactory.generateToken(user.getEmail(), user.getRole().toString());
-            String refreshToken = refreshFactory.generateToken(user.getEmail(), user.getRole().toString());
+            String accessToken = accessFactory.generateToken(user.getEmail(), user.getRole().toString(), user.getUsername());
+            String refreshToken = refreshFactory.generateToken(user.getEmail(), user.getRole().toString(), user.getUsername());
 
             return mapper.toAuthResponse(user, accessToken, refreshToken);
         } catch (AuthenticationException e) {

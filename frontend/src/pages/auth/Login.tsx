@@ -1,9 +1,16 @@
 import { useState } from "react";
 import { Box, Button, Card, Container, Form, FormField, Typography } from "../../ui";
 import { Link } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import type { AppDispatch, RootState } from "../../store/store";
+import { login } from "../../store/feature/authSlice";
+import picture from "../../assets/icons/apersant.svg";
 
 export default function Login() {
    const [form, setForm] = useState({ email: "", password: "" });
+   const dispatch = useDispatch<AppDispatch>();
+   const { loading, error } = useSelector((state: RootState) => state.auth);
+   const icon = picture;
 
    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
       setForm({ ...form, [e.target.name]: e.target.value });
@@ -11,7 +18,7 @@ export default function Login() {
 
    const handleSubmit = (e: React.FormEvent) => {
       e.preventDefault();
-      console.log("Login form submitted:", form);
+      dispatch(login(form));
    };
 
    return (
@@ -29,7 +36,7 @@ export default function Login() {
                         onChange={handleChange}
                         required
                         rounded
-                        endAdornmentSrc="/images/at_fill.svg"
+                        endAdornmentSrc="v"
                         endAdornmentAlt="email"
                      />
                      <FormField
@@ -40,16 +47,21 @@ export default function Login() {
                         onChange={handleChange}
                         required
                         rounded
-                        endAdornmentSrc="/images/safe_lock_fill.svg"
+                        endAdornmentSrc={icon}
                         endAdornmentAlt="lock"
                      />
-                     <Button type="submit" variant="solid">Sign In</Button>
+                     <Button type="submit" variant="solid" disabled={loading}>
+                        {loading ? "Loading..." : "Sign In"}
+                     </Button>
                   </Form>
                   <Typography variant="caption" style={{ marginTop: 20, display: "block" }}>
                      Don't have an account?
                      <Link to="/register" className="link" style={{ marginLeft: 5 }}>
                         Sign Up
                      </Link>
+                  </Typography>
+                  <Typography variant="caption" style={{ color: "red", marginTop: 10, display: "block" }}>
+                     {error}
                   </Typography>
                </Card>
             </Box>

@@ -14,7 +14,7 @@ public class AccessTokenFactory implements TokenFactory {
     private final JwtProvider provider;
 
     @Override
-    public String generateToken(String email, String role) {
-        return provider.generateToken(email, role, properties.accessExpiration());
+    public String generateToken(String email, String role, String username) {
+        return provider.generateToken(email, role, username, properties.accessExpiration());
     }
 }
