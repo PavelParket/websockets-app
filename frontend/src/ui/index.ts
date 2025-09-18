@@ -16,3 +16,4 @@ export { Icon } from "./components/common/Icon";
 
 export { ThemeProvider } from "./theme/ThemeProvider"
 export { useTheme } from "./theme/useTheme";
+export { useThemedIcon } from "./hooks/useThemedIcon";

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Box, Button, Card, Container, Form, FormField, Typography } from "../../ui";
+import { Box, Button, Card, Container, Form, FormField, Typography, useThemedIcon } from "../../ui";
 import { Link } from "react-router-dom";
 
 export default function Register() {
@@ -8,6 +8,8 @@ export default function Register() {
       email: "",
       password: "",
    });
+
+   const { getIcon } = useThemedIcon();
 
    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
       setForm({ ...form, [e.target.name]: e.target.value });
@@ -32,7 +34,7 @@ export default function Register() {
                         onChange={handleChange}
                         required
                         rounded
-                        endAdornmentSrc="/images/user_3_fill.svg"
+                        endAdornmentSrc={getIcon("user")}
                         endAdornmentAlt="user"
                      />
                      <FormField
@@ -43,7 +45,7 @@ export default function Register() {
                         onChange={handleChange}
                         required
                         rounded
-                        endAdornmentSrc="/images/at_fill.svg"
+                        endAdornmentSrc={getIcon("apersant")}
                         endAdornmentAlt="email"
                      />
                      <FormField
@@ -54,7 +56,7 @@ export default function Register() {
                         onChange={handleChange}
                         required
                         rounded
-                        endAdornmentSrc="/images/safe_lock_fill.svg"
+                        endAdornmentSrc={getIcon("safeLock")}
                         endAdornmentAlt="lock"
                      />
                      <Button type="submit" variant="solid">Sign Up</Button>

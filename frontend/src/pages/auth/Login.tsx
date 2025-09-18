@@ -4,13 +4,13 @@ import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import type { AppDispatch, RootState } from "../../store/store";
 import { login } from "../../store/feature/authSlice";
-import picture from "../../assets/icons/apersant.svg";
+import { useThemedIcon } from "../../ui/hooks/useThemedIcon";
 
 export default function Login() {
    const [form, setForm] = useState({ email: "", password: "" });
    const dispatch = useDispatch<AppDispatch>();
    const { loading, error } = useSelector((state: RootState) => state.auth);
-   const icon = picture;
+   const { getIcon } = useThemedIcon();
 
    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
       setForm({ ...form, [e.target.name]: e.target.value });
@@ -36,7 +36,7 @@ export default function Login() {
                         onChange={handleChange}
                         required
                         rounded
-                        endAdornmentSrc="v"
+                        endAdornmentSrc={getIcon("apersant")}
                         endAdornmentAlt="email"
                      />
                      <FormField
@@ -47,7 +47,7 @@ export default function Login() {
                         onChange={handleChange}
                         required
                         rounded
-                        endAdornmentSrc={icon}
+                        endAdornmentSrc={getIcon("safeLock")}
                         endAdornmentAlt="lock"
                      />
                      <Button type="submit" variant="solid" disabled={loading}>
