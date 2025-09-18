@@ -28,4 +28,9 @@ public class AuthController {
     public ResponseEntity<AuthResponse> login(@RequestBody AuthRequest request) {
         return new ResponseEntity<>(facade.login(request), HttpStatus.OK);
     }
+
+    @PostMapping("refresh")
+    public ResponseEntity<AuthResponse> refresh(@RequestBody String token) {
+        return new ResponseEntity<>(facade.refresh(token), HttpStatus.OK);
+    }
 }

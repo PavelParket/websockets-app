@@ -24,4 +24,8 @@ public class AuthenticationFacade {
     public AuthResponse login(AuthRequest request) {
         return authService.login(request);
     }
+
+    public AuthResponse refresh(String token) {
+        return authService.refresh(token);
+    }
 }

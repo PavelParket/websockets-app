@@ -4,8 +4,6 @@ import com.security_service.dto.AuthRequest;
 import com.security_service.dto.AuthResponse;
 import com.security_service.entity.User;
 import com.security_service.exception.InvalidCredentialsException;
-import com.security_service.jwt.factory.AccessTokenFactory;
-import com.security_service.jwt.factory.RefreshTokenFactory;
 import com.security_service.mapper.UserMapper;
 import com.security_service.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -23,9 +21,7 @@ public class AuthService {
 
     private final UserMapper mapper;
 
-    private final AccessTokenFactory accessFactory;
-
-    private final RefreshTokenFactory refreshFactory;
+    private final TokenService tokenService;
 
     private final AuthenticationManager manager;
 
@@ -33,8 +29,8 @@ public class AuthService {
         User user = repository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found: " + email));
 
-        String accessToken = accessFactory.generateToken(email, user.getRole().toString(), user.getUsername());
-        String refreshToken = refreshFactory.generateToken(email, user.getRole().toString(), user.getUsername());
+        String accessToken = tokenService.generateAccess(email, user.getRole().toString(), user.getUsername());
+        String refreshToken = tokenService.generateRefresh(email, user.getRole().toString(), user.getUsername());
 
         return mapper.toAuthResponse(user, accessToken, refreshToken);
     }
@@ -46,13 +42,17 @@ public class AuthService {
 
             authenticate(request.email(), request.password());
 
-            String accessToken = accessFactory.generateToken(user.getEmail(), user.getRole().toString(), user.getUsername());
-            String refreshToken = refreshFactory.generateToken(user.getEmail(), user.getRole().toString(), user.getUsername());
+            String accessToken = tokenService.generateAccess(user.getEmail(), user.getRole().toString(), user.getUsername());
+            String refreshToken = tokenService.generateRefresh(user.getEmail(), user.getRole().toString(), user.getUsername());
 
             return mapper.toAuthResponse(user, accessToken, refreshToken);
         } catch (AuthenticationException e) {
             throw new InvalidCredentialsException("Invalid credentials");
         }
+    }
+
+    public AuthResponse refresh(String token) {
+        return tokenService.refresh(token, repository, mapper);
     }
 
     private void authenticate(String email, String password) {
