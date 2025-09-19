@@ -1,6 +1,6 @@
 import { Container, Img, List, Typography, Box, Button, useTheme, Card, Input, ThemeSwitcher } from "../ui";
 
-export function Playground() {
+export default function Playground() {
    const { theme, toggleTheme } = useTheme();
 
    return (

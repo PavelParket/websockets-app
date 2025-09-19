@@ -1,6 +1,7 @@
 import { createAsyncThunk, createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import api from "../../api/axios";
 import axios from "axios";
+import { tokenService } from "../../services/tokenService";
 
 export interface AuthState {
    id: number | null;
@@ -47,6 +48,12 @@ const authSlice = createSlice({
          state.accessToken = null;
          state.refreshToken = null;
          state.error = null;
+         tokenService.clear();
+      },
+      setTokens: (state, action: PayloadAction<{ accessToken: string; refreshToken: string }>) => {
+         state.accessToken = action.payload.accessToken;
+         state.refreshToken = action.payload.refreshToken;
+         tokenService.setTokens(action.payload);
       },
    },
    extraReducers: (builder) => {
@@ -69,5 +76,5 @@ const authSlice = createSlice({
    },
 });
 
-export const { logout } = authSlice.actions;
+export const { logout, setTokens } = authSlice.actions;
 export default authSlice.reducer;

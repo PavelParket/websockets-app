@@ -1,7 +1,21 @@
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import { Button, Navbar, ThemeSwitcher, Typography } from "../ui"
+import { useDispatch, useSelector } from "react-redux";
+import type { RootState } from "../store/store";
+import { logout } from "../store/feature/authSlice";
 
 export default function Header() {
+   const { id } = useSelector((state: RootState) => state.auth);
+   const dispatch = useDispatch();
+   const navigate = useNavigate();
+
+   const handleLogout = () => {
+      dispatch(logout());
+      setTimeout(() => {
+         navigate("/");
+      }, 0);
+   };
+
    return (
       <Navbar
          brand={(
@@ -11,15 +25,26 @@ export default function Header() {
          )}
          right={(
             <>
-               <Link to="/register">
-                  <Button variant="solid">Sign Up</Button>
-               </Link>
-               <Link to="/login">
-                  <Button variant="solid">Sign In</Button>
-               </Link>
+               {!id && (
+                  <>
+                     <Link to="/register">
+                        <Button variant="solid">Sign Up</Button>
+                     </Link>
+                     <Link to="/login">
+                        <Button variant="solid">Sign In</Button>
+                     </Link>
+                  </>
+               )}
+
+               {id && (
+                  <Button variant="ghost" onClick={handleLogout}>
+                     Logout
+                  </Button>
+               )}
+
                <ThemeSwitcher />
             </>
          )}
       />
-   )
+   );
 }
