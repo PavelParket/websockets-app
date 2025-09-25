@@ -1,60 +1,41 @@
 package com.mediator_service.provider;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mediator_service.jwt.JwtProvider;
+import io.jsonwebtoken.JwtException;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.stereotype.Component;
-
-import java.nio.charset.StandardCharsets;
-import java.util.Base64;
-import java.util.List;
+import org.springframework.web.util.UriComponentsBuilder;
 
 @Component("jwtIdentityProvider")
+@RequiredArgsConstructor
 public class JwtIdentityProvider implements UserIdentityProvider {
+
+    private final JwtProvider provider;
 
     @Override
     public String resolveUserId(ServerHttpRequest request) {
-        List<String> headers = request.getHeaders().get("Authorization");
+        var params = UriComponentsBuilder.fromUri(request.getURI()).build().getQueryParams();
+        String token = params.getFirst("token");
 
-        if (headers == null || headers.isEmpty()) {
+        if (token == null || token.isBlank()) {
             return "guest-" + System.currentTimeMillis();
         }
 
-        String token = headers.getFirst().replace("Bearer ", "").trim();
-
-        try {
-            String[] parts = token.split("\\.");
-            String payload = new String(Base64.getDecoder().decode(parts[1]), StandardCharsets.UTF_8);
-
-            ObjectMapper mapper = new ObjectMapper();
-            JsonNode node = mapper.readTree(payload);
-
-            return node.has("sub") ? node.get("sub").asText() : "guest-" + System.currentTimeMillis();
-        } catch (Exception e) {
-            return "guest-" + System.currentTimeMillis();
+        if (!provider.validate(token)) {
+            throw new JwtException("Invalid JWT token");
         }
+
+        String username = provider.getUsername(token);
+
+        return (username != null && !username.isBlank()) ? username : "guest-" + System.currentTimeMillis();
     }
 
     @Override
     public String resolveRoomId(ServerHttpRequest request) {
-        List<String> headers = request.getHeaders().get("Authorization");
+        var params = UriComponentsBuilder.fromUri(request.getURI()).build().getQueryParams();
+        String roomId = params.getFirst("roomId");
 
-        if (headers == null || headers.isEmpty()) {
-            return "default";
-        }
-
-        String token = headers.getFirst().replace("Bearer ", "").trim();
-
-        try {
-            String[] parts = token.split("\\.");
-            String payload = new String(Base64.getDecoder().decode(parts[1]), StandardCharsets.UTF_8);
-
-            ObjectMapper mapper = new ObjectMapper();
-            JsonNode node = mapper.readTree(payload);
-
-            return node.has("room") ? node.get("room").asText() : "default";
-        } catch (Exception e) {
-            return "default";
-        }
+        return (roomId == null || roomId.isBlank()) ? "default" : roomId;
     }
 }

@@ -15,7 +15,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class UserHandshakeInterceptor implements HandshakeInterceptor {
 
-    private final @Qualifier("queryParamIdentityProvider") UserIdentityProvider identityProvider;
+    private final @Qualifier("jwtIdentityProvider") UserIdentityProvider identityProvider;
 
     @Override
     public boolean beforeHandshake(ServerHttpRequest request, ServerHttpResponse response, WebSocketHandler wsHandler, Map<String, Object> attributes) throws Exception {
