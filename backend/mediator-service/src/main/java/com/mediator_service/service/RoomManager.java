@@ -37,7 +37,7 @@ public class RoomManager {
 
         log.info("Session \"{}\" joined room \"{}\"", session.getId(), roomId);
 
-        var history = service.getHistory(roomId);
+        /*var history = service.getHistory(roomId);
 
         if (!history.isEmpty()) {
             try {
@@ -52,7 +52,7 @@ public class RoomManager {
             } catch (Exception e) {
                 log.error("Failed to send history to session {}", session.getId(), e);
             }
-        }
+        }*/
     }
 
     public void removeSession(String roomId, WebSocketSession session) {
@@ -78,9 +78,9 @@ public class RoomManager {
             if (sessions == null || sessions.isEmpty()) return;
 
             for (WebSocketSession session : sessions) {
-                if (session.equals(sender)) {
+                /*if (session.equals(sender)) {
                     continue;
-                }
+                }*/
 
                 try {
                     synchronized (session) {

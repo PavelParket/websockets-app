@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -25,5 +26,9 @@ public class WebSocketService {
             put("totalSessions", sessionManager.getAll().size());
             put("activeUsers", sessionManager.getAll().keySet());
         }};
+    }
+
+    public List<String> getUsersInRoom(String roomId) {
+        return roomManager.getUsersId(roomId).stream().toList();
     }
 }

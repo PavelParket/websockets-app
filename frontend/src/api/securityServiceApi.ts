@@ -1,14 +1,14 @@
 import axios, { AxiosError, type InternalAxiosRequestConfig } from "axios";
 import { tokenService } from "../services/tokenService";
 
-const api = axios.create({
+const secureApi = axios.create({
    baseURL: "http://localhost:8081",
    headers: {
       "Content-Type": "application/json",
    },
 });
 
-api.interceptors.request.use((config: InternalAxiosRequestConfig) => {
+secureApi.interceptors.request.use((config: InternalAxiosRequestConfig) => {
 
    const token = tokenService.getAccessToken();
 
@@ -19,7 +19,7 @@ api.interceptors.request.use((config: InternalAxiosRequestConfig) => {
    return config;
 });
 
-api.interceptors.response.use(
+secureApi.interceptors.response.use(
    (response) => response,
    async (error: AxiosError) => {
       const originalRequest = error.config as InternalAxiosRequestConfig & { _retry?: boolean };
@@ -35,13 +35,13 @@ api.interceptors.response.use(
                return Promise.reject(error);
             }
 
-            const response = await api.post("/auth/refresh", { token: refreshToken });
+            const response = await secureApi.post("/auth/refresh", { token: refreshToken });
             const data = response.data as { accessToken: string; refreshToken: string };
 
             tokenService.setTokens(data);
 
             originalRequest.headers.Authorization = `Bearer ${data.accessToken}`;
-            return api(originalRequest);
+            return secureApi(originalRequest);
          } catch (refreshError) {
             tokenService.clear();
             return Promise.reject(refreshError);
@@ -52,4 +52,4 @@ api.interceptors.response.use(
    }
 );
 
-export default api;
+export default secureApi;

@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice, type PayloadAction } from "@reduxjs/toolkit";
-import api from "../../api/axios";
+import api from "../../api/securityServiceApi";
 import axios from "axios";
 import { tokenService } from "../../services/tokenService";
 

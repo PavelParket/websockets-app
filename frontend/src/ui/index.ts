@@ -13,6 +13,8 @@ export { Navbar } from "./components/navigation/Navbar";
 export { Form } from "./components/forms/Form";
 export { FormField } from "./components/forms/FormField";
 export { Icon } from "./components/common/Icon";
+export { Textfield } from "./components/forms/Textfield";
+export { Modal } from "./components/layout/Modal";
 
 export { ThemeProvider } from "./theme/ThemeProvider"
 export { useTheme } from "./theme/useTheme";

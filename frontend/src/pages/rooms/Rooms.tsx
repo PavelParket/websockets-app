@@ -1,16 +1,35 @@
-import { useEffect } from "react";
-import { Box, Button, Card, Container, Typography } from "../ui";
+import { useEffect, useState } from "react";
+import { Box, Button, Card, Container, Modal, Typography } from "../ui";
 import { useSelector, useDispatch } from "react-redux";
 import type { RootState, AppDispatch } from "../store/store";
 import { fetchRooms } from "../store/feature/roomsSlice";
+import { useNavigate } from "react-router-dom";
 
 export default function Rooms() {
    const dispatch = useDispatch<AppDispatch>();
+   const navigate = useNavigate();
    const { rooms, loading, error } = useSelector((state: RootState) => state.rooms);
+   const { accessToken } = useSelector((state: RootState) => state.auth);
+
+   const [modalOpen, setModalOpen] = useState(false);
+   const [modalContent, setModalContent] = useState<string>("");
 
    useEffect(() => {
       dispatch(fetchRooms());
    }, [dispatch]);
+
+   const handleJoinRoom = (roomId: string) => {
+      if (!accessToken) {
+         return;
+      }
+
+      navigate(`/room/${roomId}`);
+   };
+
+   const handleInfo = (room: string) => {
+      setModalContent(`Information about room: ${room}`);
+      setModalOpen(true);
+   };
 
    if (loading) return <Typography>Loading rooms...</Typography>;
    if (error) return <Typography color="red">{error}</Typography>;
@@ -38,12 +57,16 @@ export default function Rooms() {
                         gap: "10px",
                      }}>
                      <Typography variant="body">{room}</Typography>
-                     <Button variant="solid" onClick={() => console.log(`Join room ${room}`)}>Join</Button>
-                     <Button variant="outline" onClick={() => console.log(`Info room ${room}`)}>Info</Button>
+                     <Button variant="solid" onClick={() => handleJoinRoom(room)}>Join</Button>
+                     <Button variant="outline" onClick={() => handleInfo(room)}>Info</Button>
                   </Card>
                ))}
             </Box>
          </Container>
+
+         <Modal isOpen={modalOpen} onClose={() => setModalOpen(false)} title="Room Info">
+            <Typography>{modalContent}</Typography>
+         </Modal>
       </Box>
    );
 }

@@ -1,6 +1,6 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom"
 import Home from "./pages/Home"
-import Rooms from "./pages/Rooms"
+import Rooms from "./pages/rooms/Rooms"
 import NotFound from "./pages/error/NotFound"
 import Register from "./pages/auth/Register"
 import Login from "./pages/auth/Login"
@@ -9,6 +9,7 @@ import Playground from "./pages/Playground"
 import Layout from "./components/Layout"
 import { ProtectedRoute } from "./router/ProtectedRoute"
 import Forbidden from "./pages/error/Forbidden"
+import ChatRoom from "./pages/rooms/ChatRoom"
 
 export default function App() {
    return (
@@ -20,6 +21,7 @@ export default function App() {
 
                   <Route element={<ProtectedRoute />}>
                      <Route path="/rooms" element={<Rooms />} />
+                     <Route path="/room/:roomId" element={<ChatRoom />} />
                   </Route>
 
                   <Route element={<ProtectedRoute roles={["ADMIN"]} />}>
