@@ -1,4 +1,4 @@
-package com.mediator_service.service;
+package com.mediator_service.service.manager;
 
 import com.mediator_service.domain.strategy.SessionRemovalPolicy;
 import lombok.RequiredArgsConstructor;

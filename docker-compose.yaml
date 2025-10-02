@@ -48,6 +48,20 @@ services:
     networks:
       - app-network
 
+  game-service:
+    container_name: game-service
+    env_file:
+      - .env
+    build:
+      context: .
+      dockerfile: /deploy/game-service.Dockerfile
+    ports:
+      - "8083:${SERVER_PORT}"
+    depends_on:
+      - kafka
+    networks:
+      - app-network
+
   postgres-security:
     container_name: postgres-security
     image: postgres:17.4

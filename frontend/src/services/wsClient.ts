@@ -11,7 +11,7 @@ export class WSClient<TIn = unknown, TOut = unknown> {
 
    connect() {
       return new Promise<void>((resolve, reject) => {
-         this.socket = new WebSocket(`ws://localhost:8080/ws?roomId=${encodeURIComponent(this.roomId)}&token=${encodeURIComponent(this.token)}`);
+         this.socket = new WebSocket(`ws://localhost:8080/ws/game?roomId=${encodeURIComponent(this.roomId)}&token=${encodeURIComponent(this.token)}`);
 
          this.socket.onopen = () => {
             console.log("✅ WebSocket connected");

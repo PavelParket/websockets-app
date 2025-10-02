@@ -1,24 +1,30 @@
 package com.mediator_service.service;
 
+import com.mediator_service.service.manager.AbstractRoomManager;
+import com.mediator_service.service.manager.ChatRoomManager;
+import com.mediator_service.service.manager.SessionManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class WebSocketService {
 
-    private final RoomManager roomManager;
+    private final List<AbstractRoomManager> roomManagers;
 
     private final SessionManager sessionManager;
 
     public Map<String, Object> getRooms() {
-        return new HashMap<>() {{
-            put("activeRooms", roomManager.getActiveRooms());
-        }};
+        return roomManagers.stream()
+                .collect(Collectors.toMap(
+                        AbstractRoomManager::getName,
+                        AbstractRoomManager::getActiveRooms
+                ));
     }
 
     public Map<String, Object> getSessions() {
@@ -29,6 +35,10 @@ public class WebSocketService {
     }
 
     public List<String> getUsersInRoom(String roomId) {
-        return roomManager.getUsersId(roomId).stream().toList();
+        return roomManagers.stream()
+                .filter(m -> m instanceof ChatRoomManager)
+                .findFirst()
+                .map(m -> m.getUsersId(roomId).stream().toList())
+                .orElse(List.of());
     }
 }

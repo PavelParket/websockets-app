@@ -25,6 +25,8 @@ server:
 app:
   security:
     url: ${SECURITY_SERVICE_URL}
+  game:
+    url: ${GAME_SERVICE_URL}
 
 logging:
   level:

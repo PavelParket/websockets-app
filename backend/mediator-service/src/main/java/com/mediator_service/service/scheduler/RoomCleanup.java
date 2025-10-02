@@ -1,6 +1,6 @@
 package com.mediator_service.service.scheduler;
 
-import com.mediator_service.service.RoomManager;
+import com.mediator_service.service.manager.ChatRoomManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -14,19 +14,19 @@ import java.util.Set;
 @Slf4j
 public class RoomCleanup {
 
-    private final RoomManager roomManager;
+    private final ChatRoomManager chatRoomManager;
 
     public void cleanup() {
         int removedFromRooms = 0;
 
-        for (Map.Entry<String, Set<WebSocketSession>> entry : roomManager.getRooms().entrySet()) {
+        for (Map.Entry<String, Set<WebSocketSession>> entry : chatRoomManager.getRooms().entrySet()) {
             String roomId = entry.getKey();
             Set<WebSocketSession> sessions = entry.getValue();
 
             sessions.removeIf(session -> !session.isOpen());
 
             if (sessions.isEmpty()) {
-                roomManager.getRooms().remove(roomId, sessions);
+                chatRoomManager.getRooms().remove(roomId, sessions);
                 removedFromRooms++;
             }
         }

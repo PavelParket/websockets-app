@@ -1,10 +1,10 @@
 import { useCallback, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
-import { useWebSocket } from "../services/hooks/useWebSocket";
-import type { RootState } from "../store/store";
-import { Box, Button, Card, Container, Textfield, Typography } from "../ui";
-import { getUsersInRoom } from "../services/mediatorService";
+import { useWebSocket } from "../../services/hooks/useWebSocket";
+import type { RootState } from "../../store/store";
+import { Box, Button, Card, Container, Textfield, Typography } from "../../ui";
+import { getUsersInRoom } from "../../services/mediatorService";
 
 interface MessageResponse {
    type: string;

@@ -1,6 +1,6 @@
 package com.mediator_service.service.scheduler;
 
-import com.mediator_service.service.SessionManager;
+import com.mediator_service.service.manager.SessionManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;

@@ -1,14 +1,19 @@
 import { createAsyncThunk, createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import axios from "axios";
 
+export interface RoomsPayload {
+   chatRooms: string[];
+   gameRooms: string[];
+}
+
 export interface RoomsState {
-   rooms: string[];
+   rooms: RoomsPayload;
    loading: boolean;
    error: string | null;
 }
 
 const initialState: RoomsState = {
-   rooms: [],
+   rooms: { chatRooms: [], gameRooms: [] },
    loading: false,
    error: null,
 };
@@ -17,11 +22,9 @@ export const fetchRooms = createAsyncThunk(
    "rooms/fetch",
    async (_arg: void, { rejectWithValue }) => {
       try {
-         const response = await axios.get<{
-            activeRooms: string[];
-         }>("http://localhost:8080/ws/monitor/rooms");
+         const response = await axios.get<RoomsPayload>("http://localhost:8080/ws/monitor/rooms");
 
-         return response.data.activeRooms;
+         return response.data;
       } catch (error) {
          if (axios.isAxiosError(error)) {
             const data = error.response?.data as { message?: string } | undefined;
@@ -39,7 +42,7 @@ const roomsSlice = createSlice({
    initialState,
    reducers: {
       clearRooms: (state) => {
-         state.rooms = [];
+         state.rooms = { chatRooms: [], gameRooms: [] };
          state.error = null;
       },
    },
@@ -49,7 +52,7 @@ const roomsSlice = createSlice({
             state.loading = true;
             state.error = null;
          })
-         .addCase(fetchRooms.fulfilled, (state, action: PayloadAction<string[]>) => {
+         .addCase(fetchRooms.fulfilled, (state, action: PayloadAction<RoomsPayload>) => {
             state.loading = false;
             state.rooms = action.payload;
          })

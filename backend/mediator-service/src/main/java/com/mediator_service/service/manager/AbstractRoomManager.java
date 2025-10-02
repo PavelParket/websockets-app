@@ -1,13 +1,11 @@
-package com.mediator_service.service;
+package com.mediator_service.service.manager;
 
-import com.mediator_service.domain.dto.MessageResponse;
-import com.mediator_service.message.history.MessageHistoryService;
+import com.mediator_service.domain.dto.RoomMessage;
 import com.mediator_service.message.serializer.MessageSerializer;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.stereotype.Service;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 
@@ -18,41 +16,22 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
-@Service
-@RequiredArgsConstructor
+@AllArgsConstructor
 @Slf4j
-public class RoomManager {
+public abstract class AbstractRoomManager {
 
     @Getter
     private final Map<String, Set<WebSocketSession>> rooms = new ConcurrentHashMap<>();
 
-    private final MessageHistoryService service;
-
     @Qualifier("jsonSerializer")
-    private final MessageSerializer serializer;
+    protected final MessageSerializer serializer;
 
     public void addSession(String roomId, WebSocketSession session) {
-        rooms.computeIfAbsent(roomId, k -> ConcurrentHashMap.newKeySet())
-                .add(session);
+        rooms.computeIfAbsent(roomId, k -> ConcurrentHashMap.newKeySet()).add(session);
+
+        onAddSession(roomId, session);
 
         log.info("Session \"{}\" joined room \"{}\"", session.getId(), roomId);
-
-        /*var history = service.getHistory(roomId);
-
-        if (!history.isEmpty()) {
-            try {
-                MessageResponse messageResponse = new MessageResponse(
-                        "history",
-                        "system",
-                        (String) session.getAttributes().get("userId"),
-                        roomId,
-                        history.toString()
-                );
-                session.sendMessage(new TextMessage(serializer.serialize(messageResponse)));
-            } catch (Exception e) {
-                log.error("Failed to send history to session {}", session.getId(), e);
-            }
-        }*/
     }
 
     public void removeSession(String roomId, WebSocketSession session) {
@@ -69,7 +48,7 @@ public class RoomManager {
         log.info("Session {} left room \"{}\"", session.getId(), roomId);
     }
 
-    public void broadcast(String roomId, MessageResponse message, WebSocketSession sender) {
+    public void broadcast(String roomId, RoomMessage message, WebSocketSession sender) {
         try {
             String json = serializer.serialize(message);
 
@@ -78,10 +57,6 @@ public class RoomManager {
             if (sessions == null || sessions.isEmpty()) return;
 
             for (WebSocketSession session : sessions) {
-                /*if (session.equals(sender)) {
-                    continue;
-                }*/
-
                 try {
                     synchronized (session) {
                         session.sendMessage(new TextMessage(json));
@@ -89,10 +64,6 @@ public class RoomManager {
                 } catch (IOException e) {
                     log.warn("Failed to send message to session {}: {}", session.getId(), e.getMessage());
                 }
-            }
-
-            if ("message".equals(message.type())) {
-                service.save(roomId, message);
             }
 
             log.info("Broadcast in room \"{}\" from {} → {} recipients", roomId, message.fromUserId(), sessions.size());
@@ -111,4 +82,22 @@ public class RoomManager {
                 .filter(Objects::nonNull)
                 .collect(Collectors.toSet());
     }
+
+    protected abstract void onAddSession(String roomId, WebSocketSession session);
+
+    protected void sendToSession(WebSocketSession session, RoomMessage message) {
+        try {
+            String json = serializer.serialize(message);
+
+            if (session != null && session.isOpen()) {
+                synchronized (session) {
+                    session.sendMessage(new TextMessage(json));
+                }
+            }
+        } catch (Exception e) {
+            log.warn("Failed to send private message to session \"{}\": {}", session != null ? session.getId() : "n/a", e.getMessage());
+        }
+    }
+
+    public abstract String getName();
 }

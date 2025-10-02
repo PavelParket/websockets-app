@@ -10,6 +10,7 @@ import Layout from "./components/Layout"
 import { ProtectedRoute } from "./router/ProtectedRoute"
 import Forbidden from "./pages/error/Forbidden"
 import ChatRoom from "./pages/rooms/ChatRoom"
+import TicTacToeRoom from "./pages/rooms/TicTacToeRoom"
 
 export default function App() {
    return (
@@ -21,7 +22,8 @@ export default function App() {
 
                   <Route element={<ProtectedRoute />}>
                      <Route path="/rooms" element={<Rooms />} />
-                     <Route path="/room/:roomId" element={<ChatRoom />} />
+                     <Route path="/room/chat/:roomId" element={<ChatRoom />} />
+                     <Route path="/room/game/:roomId" element={<TicTacToeRoom />} />
                   </Route>
 
                   <Route element={<ProtectedRoute roles={["ADMIN"]} />}>
