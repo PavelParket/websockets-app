@@ -14,6 +14,12 @@ export default function Home() {
                      <Link to="/rooms">
                         <Button variant="outline">Rooms</Button>
                      </Link>
+
+                     {/* STATIC COMPONENTS FOR CREATING DESIGN */}
+                     <Link to="/static">
+                        <Button variant="ghost">Design</Button>
+                     </Link>
+
                      <Link to="/playground">
                         <Button variant="outline">Playground</Button>
                      </Link>

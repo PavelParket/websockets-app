@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Box, Button, Card, Container, Modal, Textfield, Typography } from "../../ui";
+import { Box, Button, Card, Container, Icon, Modal, Textfield, Typography, useThemedIcon } from "../../ui";
 import { useSelector, useDispatch } from "react-redux";
 import type { RootState, AppDispatch } from "../../store/store";
 import { fetchRooms } from "../../store/feature/roomsSlice";
@@ -15,6 +15,7 @@ export default function Rooms() {
    const [modalContent, setModalContent] = useState<string>("");
    const [createModalOpen, setCreateModalOpen] = useState(false);
    const [newRoomName, setNewRoomName] = useState("");
+   const { getIcon, getInverseIcon } = useThemedIcon();
 
    useEffect(() => {
       dispatch(fetchRooms());
@@ -51,44 +52,102 @@ export default function Rooms() {
    ];
 
    return (
-      <Box style={{ padding: "56px 0" }}>
-         <Container>
-            <Typography variant="h2" style={{ marginBottom: "20px", textAlign: "center" }}>
-               Rooms
-            </Typography>
+      <>
+         <Box style={{
+            minHeight: "calc(100vh - 60px - 50px)",
+            margin: "0 10rem",
+            padding: "0 1rem",
+            background: "var(--color-bg-glass)",
+            backdropFilter: "blur(2px)",
+            borderRadius: "var(--radius-md)",
+            boxShadow: "var(--shadow-lg)"
+         }}>
+            <Container>
+               <Box style={{
+                  padding: "2rem 1rem 0 1rem",
+                  marginBottom: "2rem",
+                  display: "flex",
+                  flexDirection: "row",
+                  alignItems: "center",
+                  justifyContent: "space-between"
+               }}>
+                  <Typography variant="h2" style={{ textAlign: "center" }}>
+                     Rooms
+                  </Typography>
 
-            <Button variant="solid" style={{ marginBottom: "20px" }} onClick={() => setCreateModalOpen(true)}>
-               Create Room
-            </Button>
-
-            <Box style={{
-               display: "grid",
-               gridTemplateColumns: "repeat(auto-fill, minmax(180px, 1fr))",
-               gap: "16px",
-               justifyItems: "center"
-            }}>
-
-               {allRooms.length === 0 &&
-                  <Typography>No rooms available</Typography>
-               }
-
-               {allRooms.map((room) => (
-                  <Card key={room}
+                  <Button
+                     variant="solid"
+                     onClick={() => setCreateModalOpen(true)}
                      style={{
-                        width: "180px",
-                        textAlign: "center",
-                        padding: "20px",
                         display: "flex",
-                        flexDirection: "column",
-                        gap: "10px",
-                     }}>
-                     <Typography variant="body">{room}</Typography>
-                     <Button variant="solid" onClick={() => handleJoinRoom(room)}>Join</Button>
-                     <Button variant="outline" onClick={() => handleInfo(room)}>Info</Button>
-                  </Card>
-               ))}
-            </Box>
-         </Container>
+                        alignItems: "center",
+                        gap: "8px"
+                     }}
+                  >
+                     <Icon src={getInverseIcon("add")} alt="add" size={17} />
+                     <Box style={{ textAlign: "center" }}>
+                        <Typography variant="body" inverse style={{ fontSize: "16px", fontWeight: 500 }}>
+                           Create Room
+                        </Typography>
+                     </Box>
+                  </Button>
+               </Box>
+
+               <Box style={{ textAlign: "center" }}>
+                  {allRooms.length === 0 && (
+                     <Typography>No rooms available. Try to create something!</Typography>
+                  )}
+               </Box>
+
+               <Box style={{
+                  paddingBottom: "1rem",
+                  display: "grid",
+                  gridTemplateColumns: "repeat(4, 1fr)",
+                  columnGap: "16px",
+                  rowGap: "3rem",
+                  justifyItems: "center",
+               }}>
+                  {allRooms.map((room) => (
+                     <>
+                        <Card
+                           key={room}
+                           style={{
+                              width: "180px",
+                              height: "180px",
+                              textAlign: "center",
+                              padding: "20px",
+                              display: "flex",
+                              flexDirection: "column",
+                              gap: "10px",
+                           }}
+                        >
+                           <Typography variant="body">{room}</Typography>
+                           <Button variant="outline" onClick={() => handleJoinRoom(room)}>Join</Button>
+                           <Button variant="ghost" onClick={() => handleInfo(room)}>Info</Button>
+                        </Card>
+
+                        {allRooms.length > 0 && (
+                           <Card
+                              onClick={() => setCreateModalOpen(true)}
+                              style={{
+                                 width: "180px",
+                                 height: "180px",
+                                 textAlign: "center",
+                                 padding: "20px",
+                                 display: "flex",
+                                 alignItems: "center",
+                                 justifyContent: "center",
+                                 cursor: "pointer",
+                              }}
+                           >
+                              <Icon src={getIcon("add")} alt="add" size={50} />
+                           </Card>
+                        )}
+                     </>
+                  ))}
+               </Box>
+            </Container>
+         </Box>
 
          <Modal isOpen={modalOpen} onClose={() => setModalOpen(false)} title="Room Info">
             <Typography>{modalContent}</Typography>
@@ -100,6 +159,6 @@ export default function Rooms() {
                <Button variant="solid" onClick={handleCreateRoom}>Create</Button>
             </Box>
          </Modal>
-      </Box>
+      </>
    );
 }

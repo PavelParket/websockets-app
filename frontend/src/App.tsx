@@ -11,6 +11,7 @@ import { ProtectedRoute } from "./router/ProtectedRoute"
 import Forbidden from "./pages/error/Forbidden"
 import ChatRoom from "./pages/rooms/ChatRoom"
 import TicTacToeRoom from "./pages/rooms/TicTacToeRoom"
+import Static from "./pages/rooms/Static"
 
 export default function App() {
    return (
@@ -19,6 +20,10 @@ export default function App() {
             <Routes>
                <Route element={<Layout />}>
                   <Route path="/" element={<Home />} />
+
+                  /* STATIC COMPONENTS FOR CREATING DESIGN */
+                  <Route path="/static" element={<Static />} />
+                  // TODO: Don't forget to delete it
 
                   <Route element={<ProtectedRoute />}>
                      <Route path="/rooms" element={<Rooms />} />

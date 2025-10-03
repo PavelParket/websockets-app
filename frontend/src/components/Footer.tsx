@@ -9,7 +9,7 @@ export default function Footer() {
          boxShadow: "var(--shadow-sm)",
       }}>
          <Container>
-            <Stack direction="row" align="center" justify="space-between" style={{ padding: "16px 0" }}>
+            <Stack direction="row" align="center" justify="space-between" style={{ padding: "16px 0", minHeight: "50px" }}>
                <Typography variant="caption">© {new Date().getFullYear()} WebSockets App</Typography>
                <Typography variant="caption">Built with custom UI</Typography>
             </Stack>

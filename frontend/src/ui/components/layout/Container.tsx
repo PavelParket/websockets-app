@@ -10,7 +10,7 @@ export function Container({ children, maxWidth = "1200px" }: ContainerProps) {
       <div
          style={{
             maxWidth,
-            margin: "0 auto",
+            margin: "0 0",
             padding: "0 1rem",
          }}
       >

@@ -9,5 +9,9 @@ export const useThemedIcon = () => {
       return theme === 'dark' ? Icons.light[iconName] : Icons.dark[iconName];
    }, [theme]);
 
-   return { getIcon };
+   const getInverseIcon = useCallback((iconName: keyof typeof Icons.light) => {
+      return theme === 'dark' ? Icons.dark[iconName] : Icons.light[iconName];
+   }, [theme]);
+
+   return { getIcon, getInverseIcon };
 };

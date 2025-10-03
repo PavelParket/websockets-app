@@ -1,5 +1,5 @@
 import type { HTMLAttributes, ReactNode } from "react";
-import { Container } from "../layout/Container";
+import { Box } from "../layout/Box";
 
 type NavbarProps = HTMLAttributes<HTMLElement> & {
    brand?: ReactNode;
@@ -20,19 +20,21 @@ export function Navbar({ brand, right, style, ...rest }: NavbarProps) {
          }}
          {...rest}
       >
-         <Container>
+         <Box style={{
+            padding: "0 9rem",
+         }}>
             <div style={{
                display: "flex",
                alignItems: "center",
                justifyContent: "space-between",
-               height: "64px",
+               height: "60px",
             }}>
                <div>{brand}</div>
                <nav style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
                   {right}
                </nav>
             </div>
-         </Container>
+         </Box>
       </header>
    );
 }
