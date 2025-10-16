@@ -82,8 +82,6 @@ public class GameRoomManager extends AbstractRoomManager {
     public void processReady(String roomId, String userId, WebSocketSession session) {
         var users = getUsersId(roomId);
 
-        log.error("Users {}, {}, {}", users, userId, roomId);
-
         if (!users.contains(userId)) {
             sendToSession(session, GameResponse.builder()
                     .type("system")
@@ -188,7 +186,7 @@ public class GameRoomManager extends AbstractRoomManager {
                     .roomId(response.roomId())
                     .player(symbol)
                     .board(response.board())
-                    .playersSymbols(null)
+                    .playersSymbols(playersSymbols)
                     .currentPlayer(response.currentPlayer())
                     .winner(response.winner())
                     .message(response.message())
